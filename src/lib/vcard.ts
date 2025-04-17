@@ -1,51 +1,48 @@
 import vCard from 'vcards-js';
-import { CardFormData } from '@/lib/validators/cardFormSchema';
 
-export const generateVCard = (data: CardFormData): string => {
-  const vcard = vCard();
+export function createVCardString(
+  firstName: string,
+  lastName: string,
+  jobTitle: string,
+  businessName: string,
+  businessAddress: string,
+  city: string,
+  state: string,
+  postalCode: string,
+  country: string,
+  primaryPhone: string,
+  primaryEmail: string,
+  website: string,
+  linkedinUrl: string,
+  facebookUrl: string,
+  twitterUrl: string,
+  instagramUrl: string
+): string {
+  const vcard = new vCard();
 
   // Personal Information
-  vcard.firstName = data.firstName || '';
-  vcard.lastName = data.lastName || '';
-  vcard.title = data.jobTitle || '';
-  vcard.organization = data.businessName || '';
-  vcard.note = data.businessDescription || '';
+  vcard.firstName = firstName || '';
+  vcard.lastName = lastName || '';
+  vcard.title = jobTitle || '';
 
-  // Business Address
-  if (data.businessAddress) {
-    vcard.homeAddress.street = data.businessAddress || '';
-    vcard.homeAddress.city = data.city || '';
-    vcard.homeAddress.state = data.state || '';
-    vcard.homeAddress.postalCode = data.postalCode || '';
-    vcard.homeAddress.countryRegion = data.country || '';
-  }
+  // Business Information
+  vcard.organization = businessName || '';
+  vcard.workAddress.street = businessAddress || '';
+  vcard.workAddress.city = city || '';
+  vcard.workAddress.state = state || '';
+  vcard.workAddress.postalCode = postalCode || '';
+  vcard.workAddress.country = country || '';
 
-  // Primary Actions (Phone, Email, Website)
-  data.primaryActions?.forEach(action => {
-    switch (action.type) {
-      case 'call':
-        vcard.cellPhone = action.value || '';
-        break;
-      case 'whatsapp':
-        // You might want to format the number correctly for international use
-        vcard.cellPhone = action.value || '';
-        break;
-      case 'email':
-        vcard.email = action.value || '';
-        break;
-      case 'website':
-        vcard.url = action.value || '';
-        break;
-      // Add other primary action types as needed
-    }
-  });
+  // Contact Information
+  vcard.phoneNumber = primaryPhone || '';
+  vcard.email = primaryEmail || '';
+  vcard.url = website || '';
 
-  // Social Media Links (Add as URLs)
-  data.secondaryActions?.forEach(action => {
-    vcard.url = action.url || ''; // Overwrites previous URL, can only store one. Can use note to add social media links
-    vcard.note += `${action.platform}: ${action.url}
-`
-  });
+  // Social Media Links
+  vcard.socialUrls['linkedin'] = linkedinUrl || '';
+  vcard.socialUrls['facebook'] = facebookUrl || '';
+  vcard.socialUrls['twitter'] = twitterUrl || '';
+  vcard.socialUrls['instagram'] = instagramUrl || '';
 
-  return vcard.getFormattedString();
-};
+  return vcard.getVCard();
+}

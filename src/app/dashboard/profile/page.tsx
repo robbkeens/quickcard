@@ -187,6 +187,12 @@ export default function ProfilePage() {
                             Current username: <strong>{currentUsername}</strong>
                         </p>
                     )}
+                     {currentBookmarkImage && (
+                        <div className="mt-4">
+                            <p className="text-sm text-gray-500">Current Bookmark Image:</p>
+                            <img src={currentBookmarkImage} alt="Bookmark" className="max-w-xs h-auto rounded-md" />
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

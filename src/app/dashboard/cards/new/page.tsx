@@ -1,27 +1,25 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { CardForm } from '@/components/card-form';
 import { CardFormData, defaultCardFormValues } from '@/lib/validators/cardFormSchema';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp, doc, getDoc, query, where, getDocs, updateDoc, limit } from "firebase/firestore";
+import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs, limit, addDoc } from "firebase/firestore";
 import { toast } from '@/hooks/use-toast';
 import BusinessCard from '@/components/business-card';
 import { generate } from '@/lib/utils';
-import AvatarSuggestion from '@/components/ui/avatar-suggestion';
-import { fetchAvatarSuggestions } from '@/services/avatar-suggestions';
 
+interface NewCardPageProps {}
 
-export default function NewCardPage() {
+export default function NewCardPage({}: NewCardPageProps) {
     const { user, loading: authLoading } = useAuth();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [previewData, setPreviewData] = useState<CardFormData>(defaultCardFormValues);
     const [username, setUsername] = useState<string | null>(null);
-    const [avatarSuggestions, setAvatarSuggestions] = useState<string[]>([]);
 
     useEffect(() => {
         // Redirect if user is not logged in
@@ -41,14 +39,7 @@ export default function NewCardPage() {
             }
         };
 
-        const loadAvatarSuggestions = async () => {
-            const suggestions = await fetchAvatarSuggestions();
-            setAvatarSuggestions(suggestions);
-        };
-
         fetchUsername();
-        loadAvatarSuggestions();
-
     }, [user, authLoading, router]);
 
     const isSlugTaken = async (slug: string, userId: string): Promise<boolean> => {
@@ -99,14 +90,26 @@ export default function NewCardPage() {
                 updatedAt: serverTimestamp(),
                 isActive: true, // Enable card by default
                 views: 0,
-                clicks: {
+                 clicks: {
                     call: 0,
                     whatsapp: 0,
                     email: 0,
                     website: 0,
                     booking: 0,
                     location: 0,
-                    store_name: 0
+                    store_name: 0,
+                    linkedin: 0,
+                    facebook: 0,
+                    twitter: 0,
+                    github: 0,
+                    instagram: 0,
+                    youtube: 0,
+                     tiktok: 0,
+                    threads: 0,
+                    behance: 0,
+                    dribbble: 0,
+                    cashapp: 0,
+                    paypal:0
                 }
             };
 
@@ -127,12 +130,6 @@ export default function NewCardPage() {
     const updatePreview = useCallback((data: CardFormData) => {
         setPreviewData(data);
     }, []);
-
-      const handleAvatarSelect = (imageUrl: string) => {
-        setPreviewData(prev => ({ ...prev, headshotImageUrl: imageUrl }));
-        updatePreview({ ...previewData, headshotImageUrl: imageUrl });
-    };
-
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -155,14 +152,6 @@ export default function NewCardPage() {
                         <h2 className="text-xl font-semibold mb-2">Live Preview</h2>
                         <div className="border rounded-md p-4">
                             <BusinessCard {...previewData} />
-                        </div>
-                         <div className="mt-4">
-                            <h3 className="text-lg font-semibold mb-2">Avatar Suggestions</h3>
-                            <div className="flex gap-2">
-                                {avatarSuggestions.map(url => (
-                                    <AvatarSuggestion key={url} imageUrl={url} onSelect={handleAvatarSelect} />
-                                ))}
-                            </div>
                         </div>
                     </div>
                 </div>

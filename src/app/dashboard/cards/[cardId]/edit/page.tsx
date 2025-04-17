@@ -10,7 +10,7 @@ import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getD
 import { toast } from '@/hooks/use-toast';
 import BusinessCard from '@/components/business-card';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 import { cardFormSchema } from '@/lib/validators/cardFormSchema';
 import { generate } from '@/lib/utils';
 
@@ -33,7 +33,7 @@ export default function EditCardPage({}: EditCardPageProps) {
     useEffect(() => {
         // Redirect if user is not logged in
         if (!authLoading && !user) {
-            router.push(\`/login?redirect=/dashboard/cards/${cardId}/edit\`);
+            router.push(`/login?redirect=/dashboard/cards/${cardId}/edit`);
             return;
         }
 
